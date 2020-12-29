@@ -211,13 +211,19 @@ class StaticMap extends AbstractMap
         if (!is_dir($this->getUploadRootDir())) {
             mkdir($this->getUploadRootDir());
         }
+        var_dump('UPLOAD_ROOT_DIR', $this->getUploadRootDir());
         if (is_dir($this->getUploadRootDir())) {
             $this->targetPath = $this->getAbsolutePath($targetFile);
             if (!file_exists($this->targetPath) || (filemtime($this->targetPath) + 86400) < time()) {
-                file_put_contents($this->targetPath, file_get_contents($prefix . $request));
+                $created = file_put_contents($this->targetPath, file_get_contents($prefix . $request));
+                if ($created === false) {
+                    var_dump('MAP WAS NOT SAVED', $request);
+                }
                 $request = $cachePrefix . $this->getWebPath($targetFile);
+                var_dump('MAP DOES NOT EXIST', $request);
             } else {
                 $request = $cachePrefix . $this->getWebPath($targetFile);
+                var_dump('MAP DOES EXIST', $request);
             }
         } else {
             $request = $prefix . $request;
